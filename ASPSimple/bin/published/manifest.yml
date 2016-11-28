@@ -1,0 +1,7 @@
+﻿---
+applications:
+- name: aspsimple
+  random-route: true
+  memory: 384M
+  stack: windows2012R2
+  buildpack: binary_buildpack

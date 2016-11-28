@@ -1,0 +1,34 @@
+﻿@using ASPSimple.Models
+
+@{
+    ViewBag.Title = "View Data";
+}
+
+<div>
+@using (Html.BeginForm("Upsert", "Home", FormMethod.Post,
+                                                              new { enctype = "multipart/form-data", @class = "form-inline" }))
+{
+        <div class="form-group">
+            <label for="Id">Id:</label>
+            <input type="number" class="form-control" name="Id" placeholder="1">
+        </div>
+        <div class="form-group">
+            <label for="FirstName">First Name:</label>
+            <input type="text" class="form-control" name="FirstName" placeholder="Jane">
+        </div>
+        <div class="form-group">
+            <label for="LastName">Last Name:</label>
+            <input type="text" class="form-control" name="LastName" placeholder="Doe">
+        </div>
+        <button type="submit" class="btn btn-default">Insert/Update</button>
+}
+    <table class="table table-striped">
+        <thead><th>Id</th><th>First Name</th><th>Last Name</th></thead>
+        <tbody>
+            @foreach (Attendee attendee in Model)
+            {
+                <tr><td>@attendee.Id</td><td>@attendee.FirstName</td><td>@attendee.LastName</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
