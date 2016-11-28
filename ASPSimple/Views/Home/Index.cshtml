@@ -1,0 +1,82 @@
+﻿@model ASPSimple.ViewModels.CloudFoundryViewModel
+
+@using ASPSimple.Helpers;
+@using System.Collections;
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>ASPSimple</h1>
+    <p class="lead">A small ASP.NET application to examine the environment, and test out automated health management in Cloud Foundry.</p>
+</div>
+
+<div>
+    <h3>CF Configuration Data</h3>
+    @if (Model.CloudFoundryApplication.ApplicationName == null)
+    {
+        <h4>Doesn't seem like I'm running in Cloud Foundry.  Try pushing me to Cloud Foundry with a...<pre>cf push</pre></h4>
+    }
+    else
+    {
+        <h3>CF Environment Variables</h3>
+            <table class="table table-striped">
+                <thead><tr><th>Name</th><th>Value</th></tr></thead>
+                <tbody>
+                    <tr><td>CF_INSTANCE_GUID</td><td>@System.Environment.GetEnvironmentVariable("CF_INSTANCE_GUID")</td></tr>
+                    <tr><td>CF_INSTANCE_INDEX</td><td>@System.Environment.GetEnvironmentVariable("CF_INSTANCE_INDEX")</td></tr>
+                    <tr><td>ARGJSON</td><td>@System.Environment.GetEnvironmentVariable("ARGJSON")</td></tr>
+                </tbody>
+            </table>
+
+            <h3>VCAP_APPLICATION Data</h3>
+            <table class="table table-striped">
+                <thead><tr><th>Name</th><th>Value</th></tr></thead>
+                <tbody>
+                    <tr><td>vcap:application:application_name</td><td>@Model.CloudFoundryApplication.ApplicationName</td></tr>
+                    <tr><td>vcap:application:application_id</td><td>@Model.CloudFoundryApplication.ApplicationId</td></tr>
+                    <tr><td>vcap:application:application_version</td><td>@Model.CloudFoundryApplication.ApplicationVersion</td></tr>
+                    <tr><td>vcap:application:application_uris</td><td>@(Model.CloudFoundryApplication.ApplicationUris != null ? Model.CloudFoundryApplication.ApplicationUris[0] : "")</td></tr>
+                    <tr><td>vcap:application:space_name</td><td>@Model.CloudFoundryApplication.SpaceName</td></tr>
+                    <tr><td>vcap:application:space_id</td><td>@Model.CloudFoundryApplication.SpaceId</td></tr>
+                    <tr><td>vcap:application:limits:disk</td><td>@Model.CloudFoundryApplication.DiskLimit</td></tr>
+                    <tr><td>vcap:application:limits:mem</td><td>@Model.CloudFoundryApplication.MemoryLimit</td></tr>
+                    <tr><td>vcap:application:limits:fds</td><td>@Model.CloudFoundryApplication.FileDescriptorLimit</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Configuration Data from VCAP_SERVICES</h3>
+
+            <table class="table table-striped">
+                <thead><tr><th>Name</th><th>Value</th></tr></thead>
+                <tbody>
+                    @foreach (var service in Model.CloudFoundryServices.Services)
+                    {
+                        <tr><td>vcap:services:@(service.Label):label</td><td>@service.Label</td></tr>
+                        <tr><td>vcap:services:@(service.Label):plan</td><td>@service.Plan</td></tr>
+                        <tr><td>vcap:services:@(service.Label):name</td><td>@service.Name</td></tr>
+                        <tr>
+                            <td>vcap:services:@(service.Label):tags</td>
+                            <td>
+                                @foreach (var tag in service.Tags)
+                            { @(tag + " ") }
+                        </td>
+                    </tr>
+                    <tr><td>vcap:services:@(service.Label):credentials</td><td>@Html.ShowCredentials(@service.Credentials)</td></tr>
+                    }
+                </tbody>
+            </table>
+    }
+
+    <h3>Environment Variables</h3>
+    <table class="table table-striped" style="table-layout: fixed; width: 100%">
+        <thead><tr><th>Name</th><th>Value</th></tr></thead>
+        <tbody>
+            @foreach (DictionaryEntry envvar in System.Environment.GetEnvironmentVariables())
+            {
+                <tr><td style="word-wrap: break-word">@(envvar.Key)</td><td style="word-wrap: break-word">@(envvar.Value)</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
